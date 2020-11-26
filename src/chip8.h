@@ -1,0 +1,51 @@
+#define WIDTH 64
+#define HEIGHT 32
+
+const int CHIP8_MEM_SIZE = 4096;
+const int CHIP8_V_SIZE = 16;
+const int CHIP8_VBUF_SIZE = 64 * 32;
+const int CHIP8_STACK_SIZE = 16;
+const int CHIP8_KEYPAD_SIZE = 16;
+
+typedef struct {
+    uint8_t V[16]; 
+    uint8_t *mem; 
+    uint8_t *screen;
+    uint8_t delay;
+    uint8_t sound;
+    uint8_t drawflag;
+    uint16_t I;
+    uint16_t sp; 
+    uint16_t pc;
+} Chip8;
+
+const int CHIP8_FONTSET[] = {
+    0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+    0x20, 0x60, 0x20, 0x20, 0x70, // 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+    0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+    0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
+Chip8 *chip8_init();
+void chip8_load_rom(Chip8 *chip, char *rom);
+void chip8_execute_op(Chip8 *chip);
+void chip8_blank_screen(Chip8 *chip);
+void chip8_jump(Chip8 *chip, uint16_t loc);
+void chip8_reg_set(Chip8 *chip, uint8_t reg, uint8_t value);
+void chip8_reg_add(Chip8 *chip, uint8_t reg, uint8_t value);
+void chip8_index_set(Chip8 *chip, uint16_t value);
+uint8_t *chip8_pixel_get(Chip8 *chip, uint8_t x, uint8_t y);
+void chip8_draw(Chip8 *chip, uint8_t x, uint8_t y, uint8_t n);
+void chip8_print_screen(Chip8 *chip);
