@@ -132,33 +132,26 @@ uint8_t *chip8_pixel_get(Chip8 *chip, uint8_t x, uint8_t y) {
 }
 
 void chip8_draw(Chip8 *chip, uint8_t x, uint8_t y, uint8_t n) {
-    printf("drawing to screen\n");
-    uint8_t xpos, ypos, i, j;
-    uint8_t sprite, *pixel;
-
-    xpos = chip->V[x] % 64;
-    ypos = chip->V[y] % 32;
+    unsigned short pixel;
+    
     chip->V[0xF] = 0;
-
-    for(i = 0; i < n; i++) {
-        sprite = chip->mem[chip->I + i];
-        for(j = 0; j < 8; j++) {
-            if((sprite & (0x80 >> i)) != 0) {
-                if((pixel = chip8_pixel_get(chip, xpos, ypos)) == 0) chip->V[0xF] = 1;
-                *pixel = !(*pixel);
+    for(int yline = 0; yline < n; yline++) {
+        pixel = chip->mem[chip->I + yline];
+        for(int xline = 0; xline < 8; xline++) {
+            if((pixel & (0x80 >> xline)) != 0) {
+                if(chip->screen[(x + xline + ((y + yline) * 64))] == 1)
+                    chip->V[0xF] = 1;                                 
+                chip->screen[x + xline + ((y + yline) * 64)] ^= 1;
             }
-            
-            if(xpos >= 64) break;
-            xpos++;
         }
-        ypos++;
-        if(ypos >= 32) break;
     }
+
     chip->drawflag = 0;
 }
 
 void chip8_print_screen(Chip8 *chip) {
     int i;
+
 
     system("clear");
     for(i = 0; i < CHIP8_VBUF_SIZE; i++) {
